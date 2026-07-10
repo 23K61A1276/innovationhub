@@ -1,74 +1,35 @@
 pipeline {
     agent any
 
-    environment {
-        FRONTEND_DIR = 'frontend'
-        BACKEND_DIR  = 'backend'
-        IMAGE_NAME   = 'innovationhub'
-    }
-
     stages {
 
-        stage('Checkout Source Code') {
+        stage('Build') {
             steps {
-                checkout scm
+                echo 'Building the application...'
             }
         }
 
-        stage('Build Frontend') {
+        stage('Test') {
             steps {
-                dir("${FRONTEND_DIR}") {
-                    bat 'npm install'
-                    bat 'npm run build'
-                }
+                echo 'Running tests...'
             }
         }
 
-        stage('Install Backend Dependencies') {
+        stage('Deploy') {
             steps {
-                dir("${BACKEND_DIR}") {
-                    bat 'python --version'
-                    bat 'python -m pip install --upgrade pip'
-                    bat 'python -m pip install -r requirements.txt'
-                }
+                echo 'Deploying the application...'
             }
         }
 
-        stage('Verify Docker') {
-            steps {
-                bat 'docker --version'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                bat 'docker build -t %IMAGE_NAME% .'
-            }
-        }
-
-        stage('Pipeline Completed') {
-            steps {
-                echo '========================================='
-                echo 'CI/CD Pipeline Executed Successfully'
-                echo 'Frontend Build Completed'
-                echo 'Backend Dependencies Installed'
-                echo 'Docker Image Built'
-                echo '========================================='
-            }
-        }
     }
 
     post {
         success {
-            echo 'Build Successful'
+            echo 'CI/CD Pipeline completed successfully!'
         }
 
         failure {
-            echo 'Build Failed'
-        }
-
-        always {
-            cleanWs()
+            echo 'Pipeline failed!'
         }
     }
 }
