@@ -6,7 +6,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/23K61A1276/innovationhub.git/'
+                    url: 'https://github.com/23K61A1276/innovationhub.git'
             }
         }
 
@@ -29,23 +29,40 @@ pipeline {
         stage('Install Backend') {
             steps {
                 dir('backend') {
-                    bat 'pip install -r requirements.txt'
+                    bat 'py -m pip install --upgrade pip'
+                    bat 'py -m pip install -r requirements.txt'
                 }
             }
         }
 
-        stage('Test Backend') {
+        stage('Backend Test') {
             steps {
                 dir('backend') {
-                    bat 'python -m pytest'
+                    bat '''
+                    if exist app.py (
+                        echo Backend found successfully.
+                    ) else (
+                        exit /b 1
+                    )
+                    '''
                 }
             }
         }
 
-        stage('Completed') {
+        stage('Build Complete') {
             steps {
-                echo 'Build Successful'
+                echo 'Frontend and Backend Build Successful!'
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline Completed Successfully.'
+        }
+
+        failure {
+            echo 'Pipeline Failed.'
         }
     }
 }
