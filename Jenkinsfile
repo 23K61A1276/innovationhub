@@ -1,19 +1,24 @@
 pipeline {
     agent any
 
+    environment {
+        PYTHON = "python"
+        NODE = "npm"
+    }
+
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Source Code') {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/23K61A1276/innovationhub.git'
             }
         }
 
-        stage('Install Frontend') {
+        stage('Install Frontend Dependencies') {
             steps {
                 dir('frontend') {
-                    bat 'npm install'
+                    bat '%NODE% install'
                 }
             }
         }
@@ -21,16 +26,16 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
-                    bat 'npm run build'
+                    bat '%NODE% run build'
                 }
             }
         }
 
-        stage('Install Backend') {
+        stage('Install Backend Dependencies') {
             steps {
                 dir('backend') {
-                    bat 'py -m pip install --upgrade pip'
-                    bat 'py -m pip install -r requirements.txt'
+                    bat '%PYTHON% -m pip install --upgrade pip'
+                    bat '%PYTHON% -m pip install -r requirements.txt'
                 }
             }
         }
@@ -38,31 +43,32 @@ pipeline {
         stage('Backend Test') {
             steps {
                 dir('backend') {
-                    bat '''
-                    if exist app.py (
-                        echo Backend found successfully.
-                    ) else (
-                        exit /b 1
-                    )
-                    '''
+                    bat '%PYTHON% -m pytest'
                 }
             }
         }
 
-        stage('Build Complete') {
+        stage('Build Successful') {
             steps {
-                echo 'Frontend and Backend Build Successful!'
+                echo 'Frontend Build Successful'
+                echo 'Backend Build Successful'
+                echo 'CI Pipeline Completed Successfully'
             }
         }
     }
 
     post {
+
         success {
-            echo 'Pipeline Completed Successfully.'
+            echo 'SUCCESS: Jenkins Pipeline Completed.'
         }
 
         failure {
-            echo 'Pipeline Failed.'
+            echo 'FAILED: Please check the console output.'
+        }
+
+        always {
+            cleanWs()
         }
     }
 }
