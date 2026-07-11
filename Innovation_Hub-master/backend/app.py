@@ -10,7 +10,7 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     CORS(app)
-
+    CORS(app, origins=[os.getenv("FRONTEND_URL")])
     # Configure Database
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///local.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
