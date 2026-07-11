@@ -1,2 +1,1 @@
-DATABASE_URL=postgresql://postgres.rpwsvolidhghotyfrazj:PavaniDurga@aws-1-ap-south-1.pooler.supabase.com:6543/postgres
-JWT_SECRET_KEY=super-secret-key-change-in-production
+VITE_API_URL=https://innovationhub-backend.onrender.com
