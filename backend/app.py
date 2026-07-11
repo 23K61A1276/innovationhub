@@ -16,6 +16,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['JWT_SECRET_KEY'] = os.environ.get('JWT_SECRET_KEY', 'default-secret-key')
 
+    CORS(app, origins=[os.getenv("FRONTEND_URL")])
     # Initialize extensions
     db.init_app(app)
     
