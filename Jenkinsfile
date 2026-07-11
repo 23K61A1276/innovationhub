@@ -3,33 +3,49 @@ pipeline {
 
     stages {
 
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                echo 'Building the application...'
+                git branch: 'main',
+                    url: 'https://github.com/23K61A1276/innovationhub.git/'
             }
         }
 
-        stage('Test') {
+        stage('Install Frontend') {
             steps {
-                echo 'Running tests...'
+                dir('frontend') {
+                    bat 'npm install'
+                }
             }
         }
 
-        stage('Deploy') {
+        stage('Build Frontend') {
             steps {
-                echo 'Deploying the application...'
+                dir('frontend') {
+                    bat 'npm run build'
+                }
             }
         }
 
-    }
-
-    post {
-        success {
-            echo 'CI/CD Pipeline completed successfully!'
+        stage('Install Backend') {
+            steps {
+                dir('backend') {
+                    bat 'pip install -r requirements.txt'
+                }
+            }
         }
 
-        failure {
-            echo 'Pipeline failed!'
+        stage('Test Backend') {
+            steps {
+                dir('backend') {
+                    bat 'python -m pytest'
+                }
+            }
+        }
+
+        stage('Completed') {
+            steps {
+                echo 'Build Successful'
+            }
         }
     }
 }
